@@ -1,0 +1,272 @@
+<!doctype html>
+<html lang="sr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kripto Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              panel: "#0f172a",
+              surface: "#111827",
+              accent: "#22d3ee",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="mx-auto max-w-6xl px-6 py-10">
+      <div class="mb-10 text-center">
+        <h1 class="text-4xl font-semibold text-white md:text-5xl">Moj Pro Dashboard</h1>
+        <button
+          id="refreshHeroBtn"
+          class="mt-4 inline-flex items-center justify-center rounded-full bg-cyan-400 px-6 py-3 text-sm font-semibold text-slate-900 shadow-[0_0_25px_rgba(34,211,238,0.9)] transition hover:shadow-[0_0_35px_rgba(34,211,238,1)]"
+        >
+          Osveži cene
+        </button>
+      </div>
+      <header class="mb-10 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+        <div>
+          <p class="text-sm uppercase tracking-[0.3em] text-cyan-300/70">Kripto tržište</p>
+          <h1 class="text-3xl font-semibold text-white md:text-4xl">Moderan Kripto Dashboard</h1>
+          <p class="mt-2 text-sm text-slate-400">
+            Najvećih 10 valuta po tržišnoj kapitalizaciji i promena u poslednjih 24h.
+          </p>
+        </div>
+        <div class="rounded-2xl border border-cyan-400/20 bg-slate-900/80 px-6 py-4 shadow-lg shadow-cyan-500/10">
+          <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Izvor</p>
+          <p class="text-lg font-semibold text-cyan-200">CoinGecko Public API</p>
+          <p class="mt-1 text-xs text-slate-500">Bez API ključa</p>
+        </div>
+      </header>
+
+      <section class="grid gap-6 md:grid-cols-3">
+        <div class="rounded-3xl border border-slate-800 bg-slate-900/60 p-6 shadow-lg shadow-slate-900/40">
+          <h2 class="text-lg font-semibold text-white">Top 10 Valuta</h2>
+          <p class="mt-2 text-sm text-slate-400">
+            Pregled najvažnijih kripto valuta, real-time cene i trendovi.
+          </p>
+          <div class="mt-6 flex items-center gap-3">
+            <div class="h-10 w-10 rounded-full bg-cyan-500/10 p-2">
+              <svg class="h-full w-full text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v12m6-6H6" />
+              </svg>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.3em] text-slate-400">Ažuriranje</p>
+              <p class="text-sm text-slate-200">Automatski na učitavanje</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900/60 to-slate-800/40 p-6 shadow-lg shadow-slate-900/40 md:col-span-2">
+          <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <h2 class="text-lg font-semibold text-white">Tržišni Sentiment</h2>
+              <p class="mt-2 text-sm text-slate-400">Pratite trendove i volatilnost u realnom vremenu.</p>
+            </div>
+            <div class="flex flex-wrap items-center gap-3">
+              <div class="rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-xs uppercase tracking-[0.3em] text-slate-400">
+                Auto osvežavanje: 60s
+              </div>
+              <div class="flex items-center gap-2 rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2">
+                <label for="currencySelect" class="text-xs uppercase tracking-[0.3em] text-slate-400">Valuta</label>
+                <select
+                  id="currencySelect"
+                  class="rounded-lg bg-slate-900/80 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-slate-200"
+                >
+                  <option value="usd" selected>USD</option>
+                  <option value="eur">EUR</option>
+                  <option value="rsd">RSD</option>
+                </select>
+              </div>
+              <button
+                id="refreshBtn"
+                class="inline-flex items-center justify-center rounded-xl border border-cyan-400/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-200 transition hover:border-cyan-300 hover:bg-cyan-400/20"
+              >
+                Osveži podatke
+              </button>
+            </div>
+          </div>
+          <div class="mt-6 grid gap-4 sm:grid-cols-3">
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+              <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Valute</p>
+              <p id="statCount" class="mt-2 text-2xl font-semibold text-white">10</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+              <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Prosečna Cena</p>
+              <p id="statAverage" class="mt-2 text-2xl font-semibold text-white">$--</p>
+            </div>
+            <div class="rounded-2xl border border-slate-800 bg-slate-950/40 p-4">
+              <p class="text-xs uppercase tracking-[0.3em] text-slate-500">Pozitivni Trend</p>
+              <p id="statPositive" class="mt-2 text-2xl font-semibold text-white">--</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="mt-10 rounded-3xl border border-slate-800 bg-slate-900/60 p-6 shadow-xl shadow-slate-900/40">
+        <div class="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+          <div>
+            <h2 class="text-xl font-semibold text-white">Top 10 kripto valuta</h2>
+            <p id="currencyNote" class="text-sm text-slate-400">Cene u USD i promena u poslednjih 24h.</p>
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <p id="lastUpdated" class="text-xs uppercase tracking-[0.3em] text-slate-500">Poslednje osvežavanje: --</p>
+            <div id="statusBadge" class="rounded-full border border-slate-700 bg-slate-950/50 px-4 py-2 text-xs uppercase tracking-[0.3em] text-slate-400">
+              Učitavanje...
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-6 overflow-hidden rounded-2xl border border-slate-800">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-slate-950/70 text-xs uppercase tracking-widest text-slate-400">
+              <tr>
+                <th class="px-4 py-3">Valuta</th>
+                <th class="px-4 py-3">Cena</th>
+                <th class="px-4 py-3">24h promena</th>
+                <th class="px-4 py-3 text-right">Tržišna Kapitalizacija</th>
+              </tr>
+            </thead>
+            <tbody id="coinTable" class="divide-y divide-slate-800 bg-slate-900/30">
+              <tr>
+                <td colspan="4" class="px-4 py-6 text-center text-slate-500">Podaci se učitavaju...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <script>
+      const BASE_URL =
+        "https://api.coingecko.com/api/v3/coins/markets?order=market_cap_desc&per_page=10&page=1&sparkline=false&price_change_percentage=24h";
+
+      const tableBody = document.getElementById("coinTable");
+      const statusBadge = document.getElementById("statusBadge");
+      const currencySelect = document.getElementById("currencySelect");
+      const currencyNote = document.getElementById("currencyNote");
+      const lastUpdated = document.getElementById("lastUpdated");
+      const statAverage = document.getElementById("statAverage");
+      const statPositive = document.getElementById("statPositive");
+      const refreshBtn = document.getElementById("refreshBtn");
+      const refreshHeroBtn = document.getElementById("refreshHeroBtn");
+
+      function createCurrencyFormatter(code) {
+        return new Intl.NumberFormat("en-US", {
+          style: "currency",
+          currency: code.toUpperCase(),
+          maximumFractionDigits: 2,
+        });
+      }
+
+      const compactFormatter = new Intl.NumberFormat("en-US", {
+        notation: "compact",
+        maximumFractionDigits: 2,
+      });
+
+      function setStatus(message, tone = "idle") {
+        statusBadge.textContent = message;
+        statusBadge.className =
+          "rounded-full border px-4 py-2 text-xs uppercase tracking-[0.3em] " +
+          (tone === "success"
+            ? "border-cyan-400/40 bg-cyan-500/10 text-cyan-200"
+            : tone === "error"
+              ? "border-rose-400/40 bg-rose-500/10 text-rose-200"
+              : "border-slate-700 bg-slate-950/50 text-slate-400");
+      }
+
+      function renderRows(coins, currencyFormatter) {
+        tableBody.innerHTML = "";
+        coins.forEach((coin) => {
+          const change = coin.price_change_percentage_24h ?? 0;
+          const changeTone = change >= 0 ? "text-emerald-300" : "text-rose-300";
+          const row = document.createElement("tr");
+          row.className = "hover:bg-slate-800/50 transition";
+
+          row.innerHTML = `
+            <td class="px-4 py-4">
+              <div class="flex items-center gap-3">
+                <img src="${coin.image}" alt="${coin.name}" class="h-8 w-8 rounded-full" />
+                <div>
+                  <p class="font-semibold text-white">${coin.name}</p>
+                  <p class="text-xs uppercase tracking-[0.3em] text-slate-500">${coin.symbol}</p>
+                </div>
+              </div>
+            </td>
+            <td class="px-4 py-4 font-semibold text-slate-100">${currencyFormatter.format(
+              coin.current_price
+            )}</td>
+            <td class="px-4 py-4 font-semibold ${changeTone}">${change.toFixed(2)}%</td>
+            <td class="px-4 py-4 text-right text-slate-300">${compactFormatter.format(
+              coin.market_cap
+            )}</td>
+          `;
+
+          tableBody.appendChild(row);
+        });
+      }
+
+      function updateStats(coins, currencyFormatter) {
+        const average =
+          coins.reduce((sum, coin) => sum + (coin.current_price || 0), 0) / coins.length;
+        const positive = coins.filter((coin) => (coin.price_change_percentage_24h || 0) > 0)
+          .length;
+
+        statAverage.textContent = currencyFormatter.format(average);
+        statPositive.textContent = `${positive}/10`;
+      }
+
+      function updateTimestamp() {
+        const now = new Date();
+        lastUpdated.textContent = `Poslednje osvežavanje: ${now.toLocaleTimeString("sr-RS")}`;
+      }
+
+      function updateCurrencyNote(code) {
+        const label = code.toUpperCase();
+        currencyNote.textContent = `Cene u ${label} i promena u poslednjih 24h.`;
+      }
+
+      function buildApiUrl(code) {
+        return `${BASE_URL}&vs_currency=${encodeURIComponent(code)}`;
+      }
+
+      async function loadCoins() {
+        const currencyCode = currencySelect.value;
+        const currencyFormatter = createCurrencyFormatter(currencyCode);
+        setStatus("Učitavanje...");
+        tableBody.innerHTML =
+          '<tr><td colspan="4" class="px-4 py-6 text-center text-slate-500">Učitavanje podataka...</td></tr>';
+
+        try {
+          const response = await fetch(buildApiUrl(currencyCode));
+          if (!response.ok) {
+            throw new Error("Neuspelo preuzimanje podataka.");
+          }
+          const data = await response.json();
+          renderRows(data, currencyFormatter);
+          updateStats(data, currencyFormatter);
+          updateCurrencyNote(currencyCode);
+          updateTimestamp();
+          setStatus("Uživo", "success");
+        } catch (error) {
+          tableBody.innerHTML =
+            '<tr><td colspan="4" class="px-4 py-6 text-center text-rose-300">Greška pri učitavanju podataka. Pokušajte ponovo.</td></tr>';
+          setStatus("Greška", "error");
+        }
+      }
+
+      refreshBtn.addEventListener("click", loadCoins);
+      refreshHeroBtn.addEventListener("click", loadCoins);
+      currencySelect.addEventListener("change", loadCoins);
+      loadCoins();
+      setInterval(loadCoins, 60000);
+    </script>
+  </body>
+</html>
