@@ -47,6 +47,7 @@ export type Messages = {
     tableHeaderTrend7d: string;
     toggleLanguageButton: string;
     installButton: string;
+    footerCopyright: string;
   };
   status: {
     loading: string;

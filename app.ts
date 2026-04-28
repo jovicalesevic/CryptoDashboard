@@ -117,6 +117,7 @@ function applyStaticMessages(): void {
   setTextById("tableHeaderTrend7d", staticMessages.tableHeaderTrend7d);
   setTextById("languageToggleBtnText", staticMessages.toggleLanguageButton);
   setTextById("installBtnText", staticMessages.installButton);
+  setTextById("footerCopyright", staticMessages.footerCopyright);
 }
 
 async function resolveCurrencyFetchContext(

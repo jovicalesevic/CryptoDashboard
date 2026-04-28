@@ -35,6 +35,7 @@ export const LANGUAGE_MESSAGES: Record<Language, Messages> = {
       tableHeaderTrend7d: "7d trend",
       toggleLanguageButton: "EN",
       installButton: "Instaliraj aplikaciju",
+      footerCopyright: "© 2026 Jovica Lešević. Sva prava zadržana.",
     },
     status: {
       loading: "Učitavanje...",
@@ -92,6 +93,7 @@ export const LANGUAGE_MESSAGES: Record<Language, Messages> = {
       tableHeaderTrend7d: "7d trend",
       toggleLanguageButton: "SR",
       installButton: "Install app",
+      footerCopyright: "© 2026 Jovica Lešević. All rights reserved.",
     },
     status: {
       loading: "Loading...",
