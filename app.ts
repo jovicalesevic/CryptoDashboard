@@ -18,15 +18,13 @@ import {
   updateStats,
   updateTimestamp,
 } from "./ui";
-import type { Coin, Language, Messages } from "./types";
+import type { ApiError, Coin, Language, Messages } from "./types";
 
 type CurrencyFetchContext = {
   apiCurrency: string;
   conversionRate: number;
   rateNote: string;
 };
-
-type ApiError = Error & { status?: number };
 
 const tableBody = document.getElementById("coinTable") as HTMLElement;
 const statusBadge = document.getElementById("statusBadge") as HTMLElement;
@@ -43,6 +41,7 @@ const languageToggleBtn = document.getElementById("languageToggleBtn") as HTMLBu
 let currentLanguage: Language = DEFAULT_LANGUAGE;
 let isLoading = false;
 let pendingReload = false;
+let activeRequestController: AbortController | null = null;
 
 function currentMessages(): Messages {
   return getMessages(currentLanguage);
@@ -115,7 +114,8 @@ function applyStaticMessages(): void {
 
 async function resolveCurrencyFetchContext(
   selectedCurrency: string,
-  messages: Messages
+  messages: Messages,
+  signal: AbortSignal
 ): Promise<CurrencyFetchContext> {
   if (selectedCurrency !== "rsd") {
     return {
@@ -129,7 +129,12 @@ async function resolveCurrencyFetchContext(
     DASHBOARD_CONFIG.rsdFallback;
 
   try {
-    const liveRate = await fetchExchangeRate(fxApiUrl, baseCurrency, quoteCurrency);
+    const liveRate = await fetchExchangeRate(fxApiUrl, baseCurrency, quoteCurrency, {
+      signal,
+      timeoutMs: DASHBOARD_CONFIG.requestTimeoutMs,
+      retryCount: DASHBOARD_CONFIG.requestRetryCount,
+      retryBackoffMs: DASHBOARD_CONFIG.requestRetryBackoffMs,
+    });
     return {
       apiCurrency: baseCurrency,
       conversionRate: liveRate,
@@ -142,6 +147,10 @@ async function resolveCurrencyFetchContext(
       rateNote: messages.labels.rateFallback(baseCurrency, selectedCurrency, fallbackRate),
     };
   }
+}
+
+function isAbortError(error: unknown): boolean {
+  return error instanceof DOMException && error.name === "AbortError";
 }
 
 function applyCurrencyConversion(coins: Coin[], conversionRate: number): Coin[] {
@@ -161,23 +170,35 @@ function applyCurrencyConversion(coins: Coin[], conversionRate: number): Coin[] 
 
 async function loadCoins(): Promise<void> {
   if (isLoading) {
+    activeRequestController?.abort();
     pendingReload = true;
     return;
   }
 
   isLoading = true;
+  const requestController = new AbortController();
+  activeRequestController = requestController;
   setControlsDisabled(true);
   const messages = currentMessages();
   setStatus(statusBadge, messages.status.loading);
   renderLoading(tableBody, messages);
   const selectedCurrency = currencySelect.value;
-  const currencyContext = await resolveCurrencyFetchContext(selectedCurrency, messages);
   const currencyCode = selectedCurrency;
   const currencyFormatter = createCurrencyFormatter(currencyCode, messages.locale);
   const compactFormatter = createCompactFormatter(messages.locale);
 
   try {
-    const rawData = await fetchCoins(currencyContext.apiCurrency, DASHBOARD_CONFIG.topCoinsCount);
+    const currencyContext = await resolveCurrencyFetchContext(
+      selectedCurrency,
+      messages,
+      requestController.signal
+    );
+    const rawData = await fetchCoins(currencyContext.apiCurrency, DASHBOARD_CONFIG.topCoinsCount, {
+      signal: requestController.signal,
+      timeoutMs: DASHBOARD_CONFIG.requestTimeoutMs,
+      retryCount: DASHBOARD_CONFIG.requestRetryCount,
+      retryBackoffMs: DASHBOARD_CONFIG.requestRetryBackoffMs,
+    });
     const data = applyCurrencyConversion(rawData, currencyContext.conversionRate);
     renderRows(tableBody, data, currencyFormatter, compactFormatter, messages);
 
@@ -195,6 +216,9 @@ async function loadCoins(): Promise<void> {
     updateTimestamp(lastUpdated, messages);
     setStatus(statusBadge, messages.status.live, "success");
   } catch (error) {
+    if (isAbortError(error)) {
+      return;
+    }
     const typedError = error as ApiError;
     const isRateLimited = typedError?.status === 429;
     const errorMessage = isRateLimited
@@ -207,6 +231,9 @@ async function loadCoins(): Promise<void> {
       "error"
     );
   } finally {
+    if (activeRequestController === requestController) {
+      activeRequestController = null;
+    }
     isLoading = false;
     setControlsDisabled(false);
     if (pendingReload) {

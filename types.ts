@@ -66,3 +66,5 @@ export type Messages = {
     noTrendData: string;
   };
 };
+
+export type ApiError = Error & { status?: number };
