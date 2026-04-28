@@ -46,6 +46,7 @@ export type Messages = {
     tableHeaderMarketCap: string;
     tableHeaderTrend7d: string;
     toggleLanguageButton: string;
+    installButton: string;
   };
   status: {
     loading: string;

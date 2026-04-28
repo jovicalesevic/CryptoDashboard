@@ -34,6 +34,7 @@ export const LANGUAGE_MESSAGES: Record<Language, Messages> = {
       tableHeaderMarketCap: "Tržišna Kapitalizacija",
       tableHeaderTrend7d: "7d trend",
       toggleLanguageButton: "EN",
+      installButton: "Instaliraj aplikaciju",
     },
     status: {
       loading: "Učitavanje...",
@@ -90,6 +91,7 @@ export const LANGUAGE_MESSAGES: Record<Language, Messages> = {
       tableHeaderMarketCap: "Market Cap",
       tableHeaderTrend7d: "7d trend",
       toggleLanguageButton: "SR",
+      installButton: "Install app",
     },
     status: {
       loading: "Loading...",

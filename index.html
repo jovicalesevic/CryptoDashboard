@@ -4,6 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CryptoDashboard</title>
+    <meta name="theme-color" content="#020617" />
+    <link rel="manifest" href="./manifest.webmanifest" />
+    <link rel="icon" href="./icons/icon-192.png" sizes="192x192" type="image/png" />
+    <link rel="icon" href="./icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="./icons/icon-192.png" />
     <script src="./tailwind-config.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script type="module" src="./app.ts"></script>
@@ -66,6 +71,12 @@
                 class="inline-flex items-center justify-center rounded-xl border border-slate-700 bg-slate-950/40 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-cyan-300 hover:text-cyan-200"
               >
                 <span id="languageToggleBtnText">EN</span>
+              </button>
+              <button
+                id="installBtn"
+                class="hidden inline-flex items-center justify-center rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-200 transition hover:border-emerald-300 hover:bg-emerald-400/20"
+              >
+                <span id="installBtnText">Instaliraj aplikaciju</span>
               </button>
               <div
                 id="autoRefreshLabel"

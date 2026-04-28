@@ -14,6 +14,7 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
 - **Locale-aware formatting** — Price and compact number formatting adapt to the selected UI language.
 - **Rate-limit handling** — Displays a specific message when the CoinGecko API returns `429` (too many requests).
 - **RSD FX conversion** — When RSD is selected, values are converted from EUR using live FX rate (with fallback and explicit rate note).
+- **PWA install support** — Includes manifest, service worker cache, and install prompt button for supported browsers.
 - **Responsive UI** — Mobile-friendly grid and table layout built with **Tailwind CSS** (CDN).
 - **Dark mode aesthetic** — Slate/cyan palette optimized for low-light viewing.
 

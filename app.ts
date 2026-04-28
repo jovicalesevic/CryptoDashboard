@@ -19,6 +19,10 @@ import {
   updateTimestamp,
 } from "./ui";
 import type { ApiError, Coin, Language, Messages } from "./types";
+interface BeforeInstallPromptEvent extends Event {
+  prompt: () => Promise<void>;
+  userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;
+}
 
 type CurrencyFetchContext = {
   apiCurrency: string;
@@ -37,11 +41,13 @@ const statCount = document.getElementById("statCount") as HTMLElement;
 const refreshBtn = document.getElementById("refreshBtn") as HTMLButtonElement;
 const refreshHeroBtn = document.getElementById("refreshHeroBtn") as HTMLButtonElement;
 const languageToggleBtn = document.getElementById("languageToggleBtn") as HTMLButtonElement | null;
+const installBtn = document.getElementById("installBtn") as HTMLButtonElement | null;
 
 let currentLanguage: Language = DEFAULT_LANGUAGE;
 let isLoading = false;
 let pendingReload = false;
 let activeRequestController: AbortController | null = null;
+let deferredInstallPrompt: BeforeInstallPromptEvent | null = null;
 
 function currentMessages(): Messages {
   return getMessages(currentLanguage);
@@ -110,6 +116,7 @@ function applyStaticMessages(): void {
   setTextById("tableHeaderMarketCap", staticMessages.tableHeaderMarketCap);
   setTextById("tableHeaderTrend7d", staticMessages.tableHeaderTrend7d);
   setTextById("languageToggleBtnText", staticMessages.toggleLanguageButton);
+  setTextById("installBtnText", staticMessages.installButton);
 }
 
 async function resolveCurrencyFetchContext(
@@ -243,6 +250,33 @@ async function loadCoins(): Promise<void> {
   }
 }
 
+function setupPwaInstall(): void {
+  if ("serviceWorker" in navigator) {
+    void navigator.serviceWorker.register("./sw.js");
+  }
+
+  window.addEventListener("beforeinstallprompt", (event) => {
+    event.preventDefault();
+    deferredInstallPrompt = event as BeforeInstallPromptEvent;
+    installBtn?.classList.remove("hidden");
+  });
+
+  installBtn?.addEventListener("click", async () => {
+    if (!deferredInstallPrompt) {
+      return;
+    }
+    await deferredInstallPrompt.prompt();
+    await deferredInstallPrompt.userChoice;
+    deferredInstallPrompt = null;
+    installBtn.classList.add("hidden");
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    installBtn?.classList.add("hidden");
+  });
+}
+
 refreshBtn.addEventListener("click", () => void loadCoins());
 refreshHeroBtn.addEventListener("click", () => void loadCoins());
 currencySelect.addEventListener("change", () => void loadCoins());
@@ -250,6 +284,7 @@ if (languageToggleBtn) {
   languageToggleBtn.addEventListener("click", toggleLanguage);
 }
 initializeLanguagePreference();
+setupPwaInstall();
 applyStaticMessages();
 void loadCoins();
 setInterval(() => void loadCoins(), DASHBOARD_CONFIG.autoRefreshIntervalMs);
