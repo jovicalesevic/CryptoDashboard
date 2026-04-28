@@ -1,4 +1,4 @@
-import type { Language, Messages } from "./types";
+import type { Language, Messages } from "./types.js";
 
 export const DEFAULT_LANGUAGE: Language = "sr";
 export const SUPPORTED_LANGUAGES: readonly Language[] = ["sr", "en"];

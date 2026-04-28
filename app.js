@@ -1,10 +1,10 @@
-import { fetchCoins, fetchExchangeRate } from "./api";
-import { DASHBOARD_CONFIG } from "./config";
-import { createCompactFormatter, createCurrencyFormatter } from "./formatters";
-import { getNextLanguage, getSavedLanguagePreference, isSupportedLanguage, saveLanguagePreference, } from "./language";
-import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, getMessages } from "./messages";
-import { calculateAveragePrice, countPositiveTrend } from "./stats";
-import { renderError, renderLoading, renderRows, setStatus, updateCurrencyNote, updateStats, updateTimestamp, } from "./ui";
+import { fetchCoins, fetchExchangeRate } from "./api.js";
+import { DASHBOARD_CONFIG } from "./config.js";
+import { createCompactFormatter, createCurrencyFormatter } from "./formatters.js";
+import { getNextLanguage, getSavedLanguagePreference, isSupportedLanguage, saveLanguagePreference, } from "./language.js";
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, getMessages } from "./messages.js";
+import { calculateAveragePrice, countPositiveTrend } from "./stats.js";
+import { renderError, renderLoading, renderRows, setStatus, updateCurrencyNote, updateStats, updateTimestamp, } from "./ui.js";
 const tableBody = document.getElementById("coinTable");
 const statusBadge = document.getElementById("statusBadge");
 const currencySelect = document.getElementById("currencySelect");
@@ -82,6 +82,7 @@ function applyStaticMessages() {
     setTextById("tableHeaderTrend7d", staticMessages.tableHeaderTrend7d);
     setTextById("languageToggleBtnText", staticMessages.toggleLanguageButton);
     setTextById("installBtnText", staticMessages.installButton);
+    setTextById("footerCopyright", staticMessages.footerCopyright);
 }
 async function resolveCurrencyFetchContext(selectedCurrency, messages, signal) {
     if (selectedCurrency !== "rsd") {

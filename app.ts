@@ -1,14 +1,14 @@
-import { fetchCoins, fetchExchangeRate } from "./api";
-import { DASHBOARD_CONFIG } from "./config";
-import { createCompactFormatter, createCurrencyFormatter } from "./formatters";
+import { fetchCoins, fetchExchangeRate } from "./api.js";
+import { DASHBOARD_CONFIG } from "./config.js";
+import { createCompactFormatter, createCurrencyFormatter } from "./formatters.js";
 import {
   getNextLanguage,
   getSavedLanguagePreference,
   isSupportedLanguage,
   saveLanguagePreference,
-} from "./language";
-import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, getMessages } from "./messages";
-import { calculateAveragePrice, countPositiveTrend } from "./stats";
+} from "./language.js";
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, getMessages } from "./messages.js";
+import { calculateAveragePrice, countPositiveTrend } from "./stats.js";
 import {
   renderError,
   renderLoading,
@@ -17,8 +17,8 @@ import {
   updateCurrencyNote,
   updateStats,
   updateTimestamp,
-} from "./ui";
-import type { ApiError, Coin, Language, Messages } from "./types";
+} from "./ui.js";
+import type { ApiError, Coin, Language, Messages } from "./types.js";
 interface BeforeInstallPromptEvent extends Event {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed"; platform: string }>;

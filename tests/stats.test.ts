@@ -1,8 +1,8 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 
-import { calculateAveragePrice, countPositiveTrend } from "../stats";
-import type { Coin } from "../types";
+import { calculateAveragePrice, countPositiveTrend } from "../stats.js";
+import type { Coin } from "../types.js";
 
 function createCoin(overrides: Partial<Coin>): Coin {
   return {

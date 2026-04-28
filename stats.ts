@@ -1,4 +1,4 @@
-import type { Coin } from "./types";
+import type { Coin } from "./types.js";
 
 export function calculateAveragePrice(coins: Coin[]): number {
   if (!coins.length) {

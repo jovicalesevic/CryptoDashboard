@@ -1,4 +1,4 @@
-import type { Coin, Messages, Tone } from "./types";
+import type { Coin, Messages, Tone } from "./types.js";
 
 export function setStatus(statusBadge: HTMLElement, message: string, tone: Tone = "idle"): void {
   statusBadge.textContent = message;

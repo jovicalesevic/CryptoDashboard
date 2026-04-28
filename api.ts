@@ -1,5 +1,5 @@
-import type { Coin } from "./types";
-import type { ApiError } from "./types";
+import type { Coin } from "./types.js";
+import type { ApiError } from "./types.js";
 
 const BASE_URL = "https://api.coingecko.com/api/v3/coins/markets";
 

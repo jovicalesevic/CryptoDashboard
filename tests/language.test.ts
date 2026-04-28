@@ -6,8 +6,8 @@ import {
   getSavedLanguagePreference,
   isSupportedLanguage,
   saveLanguagePreference,
-} from "../language";
-import { SUPPORTED_LANGUAGES } from "../messages";
+} from "../language.js";
+import { SUPPORTED_LANGUAGES } from "../messages.js";
 
 function createStorageMock(): Storage {
   const store = new Map<string, string>();
