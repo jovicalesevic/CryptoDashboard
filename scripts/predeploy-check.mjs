@@ -1,8 +1,15 @@
 import { spawnSync } from "node:child_process";
 
-const testResult = spawnSync("npm", ["test"], { stdio: "inherit", shell: true });
-if (testResult.status !== 0) {
-  process.exit(testResult.status ?? 1);
+const commands = [
+  ["run", "check"],
+  ["run", "build"],
+];
+
+for (const args of commands) {
+  const result = spawnSync("npm", args, { stdio: "inherit", shell: true });
+  if (result.status !== 0) {
+    process.exit(result.status ?? 1);
+  }
 }
 
 const checklist = [

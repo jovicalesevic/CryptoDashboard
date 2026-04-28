@@ -11,7 +11,7 @@ export function getNextLanguage(currentLanguage) {
 export function saveLanguagePreference(storage, language) {
   try {
     storage.setItem(LANGUAGE_STORAGE_KEY, language);
-  } catch (error) {
+  } catch {
     // Ignore storage failures (private mode/restricted settings).
   }
 }
@@ -19,7 +19,7 @@ export function saveLanguagePreference(storage, language) {
 export function getSavedLanguagePreference(storage) {
   try {
     return storage.getItem(LANGUAGE_STORAGE_KEY);
-  } catch (error) {
+  } catch {
     return null;
   }
 }

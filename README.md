@@ -24,6 +24,7 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
 | Markup  | HTML5                               |
 | Styling | CSS (Tailwind CSS via CDN)          |
 | Logic   | Vanilla JavaScript (ES modules)     |
+| Tooling | Vite, ESLint, Prettier, Node test   |
 
 ## Live Demo
 
@@ -40,9 +41,29 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
    cd CryptoDashboard
    ```
 
-2. **Open** `index.html` in your browser (double-click the file or use a local static server).
+2. **Install dependencies**:
 
-No build step is required for runtime usage.
+   ```bash
+   npm install
+   ```
+
+3. **Run local dev server**:
+
+   ```bash
+   npm run dev
+   ```
+
+4. **Create production build**:
+
+   ```bash
+   npm run build
+   ```
+
+5. **Preview production build locally**:
+
+   ```bash
+   npm run preview
+   ```
 
 ## Tests
 
@@ -50,6 +71,12 @@ Run automated tests with:
 
 ```bash
 npm test
+```
+
+Run lint checks with:
+
+```bash
+npm run lint
 ```
 
 Current test coverage includes:
@@ -63,7 +90,7 @@ Run a full pre-deploy check with:
 npm run predeploy:check
 ```
 
-This runs tests first and then prints a short manual verification checklist.
+This runs `npm run check`, `npm run build`, and then prints a short manual checklist.
 
 ## API note
 

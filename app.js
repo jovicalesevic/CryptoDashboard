@@ -128,7 +128,7 @@ async function resolveCurrencyFetchContext(selectedCurrency, messages) {
       conversionRate: liveRate,
       rateNote: messages.labels.rateReference(baseCurrency, selectedCurrency, liveRate, fxSourceName),
     };
-  } catch (error) {
+  } catch {
     return {
       apiCurrency: baseCurrency,
       conversionRate: fallbackRate,
