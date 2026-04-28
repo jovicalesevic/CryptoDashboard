@@ -103,6 +103,36 @@ function applyStaticMessages() {
   setTextById("languageToggleBtnText", staticMessages.toggleLanguageButton);
 }
 
+function resolveCurrencyFetchContext(selectedCurrency, messages) {
+  if (selectedCurrency !== "rsd") {
+    return {
+      apiCurrency: selectedCurrency,
+      conversionRate: 1,
+      rateNote: "",
+    };
+  }
+
+  const baseCurrency = DASHBOARD_CONFIG.rsdFallback.baseCurrency;
+  const conversionRate = DASHBOARD_CONFIG.rsdFallback.eurToRsdRate;
+  return {
+    apiCurrency: baseCurrency,
+    conversionRate,
+    rateNote: messages.labels.rateReference(baseCurrency, selectedCurrency, conversionRate),
+  };
+}
+
+function applyCurrencyConversion(coins, conversionRate) {
+  if (conversionRate === 1) {
+    return coins;
+  }
+
+  return coins.map((coin) => ({
+    ...coin,
+    current_price: (coin.current_price || 0) * conversionRate,
+    market_cap: (coin.market_cap || 0) * conversionRate,
+  }));
+}
+
 async function loadCoins() {
   if (isLoading) {
     pendingReload = true;
@@ -112,14 +142,17 @@ async function loadCoins() {
   isLoading = true;
   setControlsDisabled(true);
   const messages = currentMessages();
-  const currencyCode = currencySelect.value;
+  const selectedCurrency = currencySelect.value;
+  const currencyContext = resolveCurrencyFetchContext(selectedCurrency, messages);
+  const currencyCode = selectedCurrency;
   const currencyFormatter = createCurrencyFormatter(currencyCode, messages.locale);
   const compactFormatter = createCompactFormatter(messages.locale);
   setStatus(statusBadge, messages.status.loading);
   renderLoading(tableBody, messages);
 
   try {
-    const data = await fetchCoins(currencyCode, DASHBOARD_CONFIG.topCoinsCount);
+    const rawData = await fetchCoins(currencyContext.apiCurrency, DASHBOARD_CONFIG.topCoinsCount);
+    const data = applyCurrencyConversion(rawData, currencyContext.conversionRate);
     renderRows(tableBody, data, currencyFormatter, compactFormatter);
 
     const average = calculateAveragePrice(data);
@@ -132,7 +165,7 @@ async function loadCoins() {
       currencyFormatter.format(average),
       `${positive}/${totalCoins}`
     );
-    updateCurrencyNote(currencyNote, currencyCode, messages);
+    updateCurrencyNote(currencyNote, currencyCode, messages, currencyContext.rateNote);
     updateTimestamp(lastUpdated, messages);
     setStatus(statusBadge, messages.status.live, "success");
   } catch (error) {

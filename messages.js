@@ -46,7 +46,10 @@ export const LANGUAGE_MESSAGES = {
     },
     labels: {
       lastUpdated: "Poslednje osvežavanje:",
-      currencyNote: (code) => `Cene u ${code.toUpperCase()} i promena u poslednjih 24h.`,
+      currencyNote: (code, rateNote = "") =>
+        `Cene u ${code.toUpperCase()} i promena u poslednjih 24h.${rateNote ? ` ${rateNote}` : ""}`,
+      rateReference: (base, quote, rate) =>
+        `Za poređenje koristimo kurs 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
     },
   },
   en: {
@@ -92,7 +95,10 @@ export const LANGUAGE_MESSAGES = {
     },
     labels: {
       lastUpdated: "Last updated:",
-      currencyNote: (code) => `Prices in ${code.toUpperCase()} and 24h change.`,
+      currencyNote: (code, rateNote = "") =>
+        `Prices in ${code.toUpperCase()} and 24h change.${rateNote ? ` ${rateNote}` : ""}`,
+      rateReference: (base, quote, rate) =>
+        `Reference rate used for comparison: 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
     },
   },
 };

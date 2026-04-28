@@ -59,6 +59,6 @@ export function updateTimestamp(lastUpdated, messages) {
   lastUpdated.textContent = `${messages.labels.lastUpdated} ${now.toLocaleTimeString(messages.locale)}`;
 }
 
-export function updateCurrencyNote(currencyNote, code, messages) {
-  currencyNote.textContent = messages.labels.currencyNote(code);
+export function updateCurrencyNote(currencyNote, code, messages, rateNote = "") {
+  currencyNote.textContent = messages.labels.currencyNote(code, rateNote);
 }
