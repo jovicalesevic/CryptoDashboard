@@ -1,0 +1,17 @@
+/* Core page-level CSS extracted from index.html setup. */
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+/* Better keyboard accessibility on dark UI. */
+button:focus-visible,
+select:focus-visible {
+  outline: 2px solid rgba(34, 211, 238, 0.9);
+  outline-offset: 2px;
+}

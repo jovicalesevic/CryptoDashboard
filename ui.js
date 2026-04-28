@@ -1,0 +1,64 @@
+export function setStatus(statusBadge, message, tone = "idle") {
+  statusBadge.textContent = message;
+  statusBadge.className =
+    "rounded-full border px-4 py-2 text-xs uppercase tracking-[0.3em] " +
+    (tone === "success"
+      ? "border-cyan-400/40 bg-cyan-500/10 text-cyan-200"
+      : tone === "error"
+        ? "border-rose-400/40 bg-rose-500/10 text-rose-200"
+        : "border-slate-700 bg-slate-950/50 text-slate-400");
+}
+export function renderLoading(tableBody, messages) {
+  tableBody.innerHTML =
+    `<tr><td colspan="4" class="px-4 py-6 text-center text-slate-500">${messages.table.loading}</td></tr>`;
+}
+
+export function renderError(tableBody, message) {
+  tableBody.innerHTML =
+    `<tr><td colspan="4" class="px-4 py-6 text-center text-rose-300">${message}</td></tr>`;
+}
+
+export function renderRows(tableBody, coins, currencyFormatter, compactFormatter) {
+  tableBody.innerHTML = "";
+  coins.forEach((coin) => {
+    const change = coin.price_change_percentage_24h ?? 0;
+    const changeTone = change >= 0 ? "text-emerald-300" : "text-rose-300";
+    const row = document.createElement("tr");
+    row.className = "hover:bg-slate-800/50 transition";
+
+    row.innerHTML = `
+      <td class="px-4 py-4">
+        <div class="flex items-center gap-3">
+          <img src="${coin.image}" alt="${coin.name}" class="h-8 w-8 rounded-full" />
+          <div>
+            <p class="font-semibold text-white">${coin.name}</p>
+            <p class="text-xs uppercase tracking-[0.3em] text-slate-500">${coin.symbol}</p>
+          </div>
+        </div>
+      </td>
+      <td class="px-4 py-4 font-semibold text-slate-100">${currencyFormatter.format(
+        coin.current_price
+      )}</td>
+      <td class="px-4 py-4 font-semibold ${changeTone}">${change.toFixed(2)}%</td>
+      <td class="px-4 py-4 text-right text-slate-300">${compactFormatter.format(
+        coin.market_cap
+      )}</td>
+    `;
+
+    tableBody.appendChild(row);
+  });
+}
+
+export function updateStats(statAverage, statPositive, average, positive) {
+  statAverage.textContent = average;
+  statPositive.textContent = positive;
+}
+
+export function updateTimestamp(lastUpdated, messages) {
+  const now = new Date();
+  lastUpdated.textContent = `${messages.labels.lastUpdated} ${now.toLocaleTimeString(messages.locale)}`;
+}
+
+export function updateCurrencyNote(currencyNote, code, messages) {
+  currencyNote.textContent = messages.labels.currencyNote(code);
+}

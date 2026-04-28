@@ -6,9 +6,12 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
 
 - **REST API integration** — Fetches real-time data from CoinGecko (`/coins/markets`) with error handling and loading states.
 - **Multi-currency display** — Switch quote currency between **USD**, **EUR**, and **RSD**; table and summary stats update accordingly.
+- **Bilingual UI (SR/EN)** — Toggle app language with a single button; the selected language is persisted in `localStorage`.
 - **Market overview** — Top 10 assets by market cap, 24h price change (color-coded), and compact market-cap formatting.
 - **Summary statistics** — Average price across the list and count of assets with a positive 24h trend.
 - **Auto & manual refresh** — Data loads on page load; automatic refresh every **60 seconds**; dedicated refresh controls in the hero and toolbar.
+- **Locale-aware formatting** — Price and compact number formatting adapt to the selected UI language.
+- **Rate-limit handling** — Displays a specific message when the CoinGecko API returns `429` (too many requests).
 - **Responsive UI** — Mobile-friendly grid and table layout built with **Tailwind CSS** (CDN).
 - **Dark mode aesthetic** — Slate/cyan palette optimized for low-light viewing.
 
@@ -18,7 +21,7 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
 | ------- | ----------------------------------- |
 | Markup  | HTML5                               |
 | Styling | CSS (Tailwind CSS via CDN)          |
-| Logic   | Vanilla JavaScript (ES modules N/A) |
+| Logic   | Vanilla JavaScript (ES modules)     |
 
 ## Live Demo
 
@@ -37,7 +40,20 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
 
 2. **Open** `index.html` in your browser (double-click the file or use a local static server).
 
-No build step or package manager is required.
+No build step is required for runtime usage.
+
+## Tests
+
+Run automated tests with:
+
+```bash
+npm test
+```
+
+Current test coverage includes:
+
+- statistics helpers (`stats.js`)
+- language toggle + persistence logic (`language.js`)
 
 ## API note
 
