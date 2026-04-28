@@ -8,10 +8,12 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
 - **Multi-currency display** — Switch quote currency between **USD**, **EUR**, and **RSD**; table and summary stats update accordingly.
 - **Bilingual UI (SR/EN)** — Toggle app language with a single button; the selected language is persisted in `localStorage`.
 - **Market overview** — Top 10 assets by market cap, 24h price change (color-coded), and compact market-cap formatting.
+- **7-day mini charts** — Each row includes a lightweight sparkline showing recent price direction.
 - **Summary statistics** — Average price across the list and count of assets with a positive 24h trend.
 - **Auto & manual refresh** — Data loads on page load; automatic refresh every **60 seconds**; dedicated refresh controls in the hero and toolbar.
 - **Locale-aware formatting** — Price and compact number formatting adapt to the selected UI language.
 - **Rate-limit handling** — Displays a specific message when the CoinGecko API returns `429` (too many requests).
+- **RSD FX conversion** — When RSD is selected, values are converted from EUR using live FX rate (with fallback and explicit rate note).
 - **Responsive UI** — Mobile-friendly grid and table layout built with **Tailwind CSS** (CDN).
 - **Dark mode aesthetic** — Slate/cyan palette optimized for low-light viewing.
 
@@ -54,6 +56,14 @@ Current test coverage includes:
 
 - statistics helpers (`stats.js`)
 - language toggle + persistence logic (`language.js`)
+
+Run a full pre-deploy check with:
+
+```bash
+npm run predeploy:check
+```
+
+This runs tests first and then prints a short manual verification checklist.
 
 ## API note
 

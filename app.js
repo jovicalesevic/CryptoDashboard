@@ -1,4 +1,4 @@
-import { fetchCoins } from "./api.js";
+import { fetchCoins, fetchExchangeRate } from "./api.js";
 import { DASHBOARD_CONFIG } from "./config.js";
 import { createCompactFormatter, createCurrencyFormatter } from "./formatters.js";
 import {
@@ -100,10 +100,11 @@ function applyStaticMessages() {
   setTextById("tableHeaderPrice", staticMessages.tableHeaderPrice);
   setTextById("tableHeaderChange24h", staticMessages.tableHeaderChange24h);
   setTextById("tableHeaderMarketCap", staticMessages.tableHeaderMarketCap);
+  setTextById("tableHeaderTrend7d", staticMessages.tableHeaderTrend7d);
   setTextById("languageToggleBtnText", staticMessages.toggleLanguageButton);
 }
 
-function resolveCurrencyFetchContext(selectedCurrency, messages) {
+async function resolveCurrencyFetchContext(selectedCurrency, messages) {
   if (selectedCurrency !== "rsd") {
     return {
       apiCurrency: selectedCurrency,
@@ -112,13 +113,28 @@ function resolveCurrencyFetchContext(selectedCurrency, messages) {
     };
   }
 
-  const baseCurrency = DASHBOARD_CONFIG.rsdFallback.baseCurrency;
-  const conversionRate = DASHBOARD_CONFIG.rsdFallback.eurToRsdRate;
-  return {
-    apiCurrency: baseCurrency,
-    conversionRate,
-    rateNote: messages.labels.rateReference(baseCurrency, selectedCurrency, conversionRate),
-  };
+  const {
+    baseCurrency,
+    quoteCurrency,
+    eurToRsdRate: fallbackRate,
+    fxApiUrl,
+    fxSourceName,
+  } = DASHBOARD_CONFIG.rsdFallback;
+
+  try {
+    const liveRate = await fetchExchangeRate(fxApiUrl, baseCurrency, quoteCurrency);
+    return {
+      apiCurrency: baseCurrency,
+      conversionRate: liveRate,
+      rateNote: messages.labels.rateReference(baseCurrency, selectedCurrency, liveRate, fxSourceName),
+    };
+  } catch (error) {
+    return {
+      apiCurrency: baseCurrency,
+      conversionRate: fallbackRate,
+      rateNote: messages.labels.rateFallback(baseCurrency, selectedCurrency, fallbackRate),
+    };
+  }
 }
 
 function applyCurrencyConversion(coins, conversionRate) {
@@ -130,6 +146,9 @@ function applyCurrencyConversion(coins, conversionRate) {
     ...coin,
     current_price: (coin.current_price || 0) * conversionRate,
     market_cap: (coin.market_cap || 0) * conversionRate,
+    sparkline_in_7d: {
+      price: (coin.sparkline_in_7d?.price || []).map((value) => value * conversionRate),
+    },
   }));
 }
 
@@ -142,18 +161,18 @@ async function loadCoins() {
   isLoading = true;
   setControlsDisabled(true);
   const messages = currentMessages();
+  setStatus(statusBadge, messages.status.loading);
+  renderLoading(tableBody, messages);
   const selectedCurrency = currencySelect.value;
-  const currencyContext = resolveCurrencyFetchContext(selectedCurrency, messages);
+  const currencyContext = await resolveCurrencyFetchContext(selectedCurrency, messages);
   const currencyCode = selectedCurrency;
   const currencyFormatter = createCurrencyFormatter(currencyCode, messages.locale);
   const compactFormatter = createCompactFormatter(messages.locale);
-  setStatus(statusBadge, messages.status.loading);
-  renderLoading(tableBody, messages);
 
   try {
     const rawData = await fetchCoins(currencyContext.apiCurrency, DASHBOARD_CONFIG.topCoinsCount);
     const data = applyCurrencyConversion(rawData, currencyContext.conversionRate);
-    renderRows(tableBody, data, currencyFormatter, compactFormatter);
+    renderRows(tableBody, data, currencyFormatter, compactFormatter, messages);
 
     const average = calculateAveragePrice(data);
     const positive = countPositiveTrend(data);

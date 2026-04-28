@@ -6,7 +6,7 @@ function buildApiUrl(code, topCoinsCount) {
     order: "market_cap_desc",
     per_page: String(topCoinsCount),
     page: "1",
-    sparkline: "false",
+    sparkline: "true",
     price_change_percentage: "24h",
   });
 
@@ -22,4 +22,26 @@ export async function fetchCoins(code, topCoinsCount) {
   }
 
   return response.json();
+}
+
+export async function fetchExchangeRate(apiUrl, baseCurrency, quoteCurrency) {
+  const params = new URLSearchParams({
+    from: baseCurrency.toUpperCase(),
+    to: quoteCurrency.toUpperCase(),
+  });
+  const response = await fetch(`${apiUrl}?${params.toString()}`);
+  if (!response.ok) {
+    const error = new Error("Failed to fetch exchange rate.");
+    error.status = response.status;
+    throw error;
+  }
+
+  const data = await response.json();
+  const quoteCode = quoteCurrency.toUpperCase();
+  const rate = data?.rates?.[quoteCode];
+  if (!rate || typeof rate !== "number") {
+    throw new Error("Exchange rate is missing in FX response.");
+  }
+
+  return rate;
 }

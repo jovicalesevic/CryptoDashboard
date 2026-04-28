@@ -30,6 +30,7 @@ export const LANGUAGE_MESSAGES = {
       tableHeaderPrice: "Cena",
       tableHeaderChange24h: "24h promena",
       tableHeaderMarketCap: "Tržišna Kapitalizacija",
+      tableHeaderTrend7d: "7d trend",
       toggleLanguageButton: "EN",
     },
     status: {
@@ -48,8 +49,11 @@ export const LANGUAGE_MESSAGES = {
       lastUpdated: "Poslednje osvežavanje:",
       currencyNote: (code, rateNote = "") =>
         `Cene u ${code.toUpperCase()} i promena u poslednjih 24h.${rateNote ? ` ${rateNote}` : ""}`,
-      rateReference: (base, quote, rate) =>
-        `Za poređenje koristimo kurs 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
+      rateReference: (base, quote, rate, source) =>
+        `Za poređenje koristimo kurs 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()} (${source}).`,
+      rateFallback: (base, quote, rate) =>
+        `Primenjen je rezervni kurs 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
+      noTrendData: "Nema trenda",
     },
   },
   en: {
@@ -80,6 +84,7 @@ export const LANGUAGE_MESSAGES = {
       tableHeaderPrice: "Price",
       tableHeaderChange24h: "24h change",
       tableHeaderMarketCap: "Market Cap",
+      tableHeaderTrend7d: "7d trend",
       toggleLanguageButton: "SR",
     },
     status: {
@@ -97,8 +102,11 @@ export const LANGUAGE_MESSAGES = {
       lastUpdated: "Last updated:",
       currencyNote: (code, rateNote = "") =>
         `Prices in ${code.toUpperCase()} and 24h change.${rateNote ? ` ${rateNote}` : ""}`,
-      rateReference: (base, quote, rate) =>
-        `Reference rate used for comparison: 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
+      rateReference: (base, quote, rate, source) =>
+        `Reference rate used for comparison: 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()} (${source}).`,
+      rateFallback: (base, quote, rate) =>
+        `Fallback rate applied: 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
+      noTrendData: "No trend data",
     },
   },
 };

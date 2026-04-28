@@ -5,5 +5,8 @@ export const DASHBOARD_CONFIG = {
   rsdFallback: {
     baseCurrency: "eur",
     eurToRsdRate: 117.2,
+    quoteCurrency: "rsd",
+    fxApiUrl: "https://api.frankfurter.app/latest",
+    fxSourceName: "Frankfurter API",
   },
 };
