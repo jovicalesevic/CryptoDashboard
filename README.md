@@ -79,10 +79,17 @@ Run lint checks with:
 npm run lint
 ```
 
+Run UI smoke tests with:
+
+```bash
+npm run test:smoke
+```
+
 Current test coverage includes:
 
 - statistics helpers (`stats.js`)
 - language toggle + persistence logic (`language.js`)
+- browser smoke flow (language toggle + RSD rate note + table render)
 
 Run a full pre-deploy check with:
 
@@ -91,6 +98,14 @@ npm run predeploy:check
 ```
 
 This runs `npm run check`, `npm run build`, and then prints a short manual checklist.
+
+## CI
+
+GitHub Actions workflow runs on every push/PR to `main` and executes:
+
+- `npm ci`
+- `npm run check` (lint + unit tests)
+- Playwright smoke test (`npm run test:smoke`)
 
 ## API note
 
