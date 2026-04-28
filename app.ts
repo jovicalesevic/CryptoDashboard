@@ -253,7 +253,9 @@ async function loadCoins(): Promise<void> {
 
 function setupPwaInstall(): void {
   if ("serviceWorker" in navigator) {
-    void navigator.serviceWorker.register("./sw.js");
+    void navigator.serviceWorker
+      .register("./sw.js", { updateViaCache: "none" })
+      .then((registration) => registration.update());
   }
 
   window.addEventListener("beforeinstallprompt", (event) => {
