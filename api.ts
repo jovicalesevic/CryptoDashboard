@@ -1,6 +1,14 @@
+import type { Coin } from "./types";
+
 const BASE_URL = "https://api.coingecko.com/api/v3/coins/markets";
 
-function buildApiUrl(code, topCoinsCount) {
+type ApiError = Error & { status?: number };
+
+type FxResponse = {
+  rates?: Record<string, number>;
+};
+
+function buildApiUrl(code: string, topCoinsCount: number): string {
   const params = new URLSearchParams({
     vs_currency: code,
     order: "market_cap_desc",
@@ -13,30 +21,34 @@ function buildApiUrl(code, topCoinsCount) {
   return `${BASE_URL}?${params.toString()}`;
 }
 
-export async function fetchCoins(code, topCoinsCount) {
+export async function fetchCoins(code: string, topCoinsCount: number): Promise<Coin[]> {
   const response = await fetch(buildApiUrl(code, topCoinsCount));
   if (!response.ok) {
-    const error = new Error("Failed to fetch coin data.");
+    const error: ApiError = new Error("Failed to fetch coin data.");
     error.status = response.status;
     throw error;
   }
 
-  return response.json();
+  return (await response.json()) as Coin[];
 }
 
-export async function fetchExchangeRate(apiUrl, baseCurrency, quoteCurrency) {
+export async function fetchExchangeRate(
+  apiUrl: string,
+  baseCurrency: string,
+  quoteCurrency: string
+): Promise<number> {
   const params = new URLSearchParams({
     from: baseCurrency.toUpperCase(),
     to: quoteCurrency.toUpperCase(),
   });
   const response = await fetch(`${apiUrl}?${params.toString()}`);
   if (!response.ok) {
-    const error = new Error("Failed to fetch exchange rate.");
+    const error: ApiError = new Error("Failed to fetch exchange rate.");
     error.status = response.status;
     throw error;
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as FxResponse;
   const quoteCode = quoteCurrency.toUpperCase();
   const rate = data?.rates?.[quoteCode];
   if (!rate || typeof rate !== "number") {

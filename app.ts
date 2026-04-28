@@ -1,14 +1,14 @@
-import { fetchCoins, fetchExchangeRate } from "./api.js";
-import { DASHBOARD_CONFIG } from "./config.js";
-import { createCompactFormatter, createCurrencyFormatter } from "./formatters.js";
+import { fetchCoins, fetchExchangeRate } from "./api";
+import { DASHBOARD_CONFIG } from "./config";
+import { createCompactFormatter, createCurrencyFormatter } from "./formatters";
 import {
   getNextLanguage,
   getSavedLanguagePreference,
   isSupportedLanguage,
   saveLanguagePreference,
-} from "./language.js";
-import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, getMessages } from "./messages.js";
-import { calculateAveragePrice, countPositiveTrend } from "./stats.js";
+} from "./language";
+import { DEFAULT_LANGUAGE, SUPPORTED_LANGUAGES, getMessages } from "./messages";
+import { calculateAveragePrice, countPositiveTrend } from "./stats";
 import {
   renderError,
   renderLoading,
@@ -17,43 +17,52 @@ import {
   updateCurrencyNote,
   updateStats,
   updateTimestamp,
-} from "./ui.js";
+} from "./ui";
+import type { Coin, Language, Messages } from "./types";
 
-const tableBody = document.getElementById("coinTable");
-const statusBadge = document.getElementById("statusBadge");
-const currencySelect = document.getElementById("currencySelect");
-const currencyNote = document.getElementById("currencyNote");
-const lastUpdated = document.getElementById("lastUpdated");
-const statAverage = document.getElementById("statAverage");
-const statPositive = document.getElementById("statPositive");
-const statCount = document.getElementById("statCount");
-const refreshBtn = document.getElementById("refreshBtn");
-const refreshHeroBtn = document.getElementById("refreshHeroBtn");
-const languageToggleBtn = document.getElementById("languageToggleBtn");
+type CurrencyFetchContext = {
+  apiCurrency: string;
+  conversionRate: number;
+  rateNote: string;
+};
 
-let currentLanguage = DEFAULT_LANGUAGE;
+type ApiError = Error & { status?: number };
+
+const tableBody = document.getElementById("coinTable") as HTMLElement;
+const statusBadge = document.getElementById("statusBadge") as HTMLElement;
+const currencySelect = document.getElementById("currencySelect") as HTMLSelectElement;
+const currencyNote = document.getElementById("currencyNote") as HTMLElement;
+const lastUpdated = document.getElementById("lastUpdated") as HTMLElement;
+const statAverage = document.getElementById("statAverage") as HTMLElement;
+const statPositive = document.getElementById("statPositive") as HTMLElement;
+const statCount = document.getElementById("statCount") as HTMLElement;
+const refreshBtn = document.getElementById("refreshBtn") as HTMLButtonElement;
+const refreshHeroBtn = document.getElementById("refreshHeroBtn") as HTMLButtonElement;
+const languageToggleBtn = document.getElementById("languageToggleBtn") as HTMLButtonElement | null;
+
+let currentLanguage: Language = DEFAULT_LANGUAGE;
 let isLoading = false;
 let pendingReload = false;
 
-function currentMessages() {
+function currentMessages(): Messages {
   return getMessages(currentLanguage);
 }
 
-function initializeLanguagePreference() {
+function initializeLanguagePreference(): void {
   const savedLanguage = getSavedLanguagePreference(localStorage);
   if (savedLanguage && isSupportedLanguage(savedLanguage, SUPPORTED_LANGUAGES)) {
     currentLanguage = savedLanguage;
   }
 }
 
-function toggleLanguage() {
+function toggleLanguage(): void {
   currentLanguage = getNextLanguage(currentLanguage);
   saveLanguagePreference(localStorage, currentLanguage);
   applyStaticMessages();
-  loadCoins();
+  void loadCoins();
 }
 
-function setControlsDisabled(disabled) {
+function setControlsDisabled(disabled: boolean): void {
   [refreshBtn, refreshHeroBtn, languageToggleBtn, currencySelect].forEach((element) => {
     if (element) {
       element.disabled = disabled;
@@ -61,7 +70,7 @@ function setControlsDisabled(disabled) {
   });
 }
 
-function setTextById(id, value) {
+function setTextById(id: string, value: string): void {
   const element = document.getElementById(id);
   if (!element) {
     return;
@@ -69,7 +78,7 @@ function setTextById(id, value) {
   element.textContent = value;
 }
 
-function applyStaticMessages() {
+function applyStaticMessages(): void {
   const { static: staticMessages } = currentMessages();
   document.documentElement.lang = currentLanguage;
   setTextById("heroTitle", staticMessages.heroTitle);
@@ -104,7 +113,10 @@ function applyStaticMessages() {
   setTextById("languageToggleBtnText", staticMessages.toggleLanguageButton);
 }
 
-async function resolveCurrencyFetchContext(selectedCurrency, messages) {
+async function resolveCurrencyFetchContext(
+  selectedCurrency: string,
+  messages: Messages
+): Promise<CurrencyFetchContext> {
   if (selectedCurrency !== "rsd") {
     return {
       apiCurrency: selectedCurrency,
@@ -113,13 +125,8 @@ async function resolveCurrencyFetchContext(selectedCurrency, messages) {
     };
   }
 
-  const {
-    baseCurrency,
-    quoteCurrency,
-    eurToRsdRate: fallbackRate,
-    fxApiUrl,
-    fxSourceName,
-  } = DASHBOARD_CONFIG.rsdFallback;
+  const { baseCurrency, quoteCurrency, eurToRsdRate: fallbackRate, fxApiUrl, fxSourceName } =
+    DASHBOARD_CONFIG.rsdFallback;
 
   try {
     const liveRate = await fetchExchangeRate(fxApiUrl, baseCurrency, quoteCurrency);
@@ -137,7 +144,7 @@ async function resolveCurrencyFetchContext(selectedCurrency, messages) {
   }
 }
 
-function applyCurrencyConversion(coins, conversionRate) {
+function applyCurrencyConversion(coins: Coin[], conversionRate: number): Coin[] {
   if (conversionRate === 1) {
     return coins;
   }
@@ -152,7 +159,7 @@ function applyCurrencyConversion(coins, conversionRate) {
   }));
 }
 
-async function loadCoins() {
+async function loadCoins(): Promise<void> {
   if (isLoading) {
     pendingReload = true;
     return;
@@ -188,7 +195,8 @@ async function loadCoins() {
     updateTimestamp(lastUpdated, messages);
     setStatus(statusBadge, messages.status.live, "success");
   } catch (error) {
-    const isRateLimited = error && error.status === 429;
+    const typedError = error as ApiError;
+    const isRateLimited = typedError?.status === 429;
     const errorMessage = isRateLimited
       ? messages.table.rateLimited(DASHBOARD_CONFIG.rateLimitRetrySeconds)
       : messages.table.error;
@@ -203,18 +211,18 @@ async function loadCoins() {
     setControlsDisabled(false);
     if (pendingReload) {
       pendingReload = false;
-      loadCoins();
+      void loadCoins();
     }
   }
 }
 
-refreshBtn.addEventListener("click", loadCoins);
-refreshHeroBtn.addEventListener("click", loadCoins);
-currencySelect.addEventListener("change", loadCoins);
+refreshBtn.addEventListener("click", () => void loadCoins());
+refreshHeroBtn.addEventListener("click", () => void loadCoins());
+currencySelect.addEventListener("change", () => void loadCoins());
 if (languageToggleBtn) {
   languageToggleBtn.addEventListener("click", toggleLanguage);
 }
 initializeLanguagePreference();
 applyStaticMessages();
-loadCoins();
-setInterval(loadCoins, DASHBOARD_CONFIG.autoRefreshIntervalMs);
+void loadCoins();
+setInterval(() => void loadCoins(), DASHBOARD_CONFIG.autoRefreshIntervalMs);

@@ -23,7 +23,7 @@ A lightweight, single-page cryptocurrency dashboard that pulls live market data 
 | ------- | ----------------------------------- |
 | Markup  | HTML5                               |
 | Styling | CSS (Tailwind CSS via CDN)          |
-| Logic   | Vanilla JavaScript (ES modules)     |
+| Logic   | TypeScript (strict mode)             |
 | Tooling | Vite, ESLint, Prettier, Node test   |
 
 ## Live Demo
@@ -87,8 +87,8 @@ npm run test:smoke
 
 Current test coverage includes:
 
-- statistics helpers (`stats.js`)
-- language toggle + persistence logic (`language.js`)
+- statistics helpers (`stats.ts`)
+- language toggle + persistence logic (`language.ts`)
 - browser smoke flow (language toggle + RSD rate note + table render)
 
 Run a full pre-deploy check with:

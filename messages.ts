@@ -1,7 +1,9 @@
-export const DEFAULT_LANGUAGE = "sr";
-export const SUPPORTED_LANGUAGES = ["sr", "en"];
+import type { Language, Messages } from "./types";
 
-export const LANGUAGE_MESSAGES = {
+export const DEFAULT_LANGUAGE: Language = "sr";
+export const SUPPORTED_LANGUAGES: readonly Language[] = ["sr", "en"];
+
+export const LANGUAGE_MESSAGES: Record<Language, Messages> = {
   sr: {
     locale: "sr-RS",
     static: {
@@ -19,7 +21,7 @@ export const LANGUAGE_MESSAGES = {
       updateMode: "Automatski na učitavanje",
       sentimentTitle: "Tržišni Sentiment",
       sentimentDescription: "Pratite trendove i volatilnost u realnom vremenu.",
-      autoRefreshLabel: (seconds) => `Auto osvežavanje: ${seconds}s`,
+      autoRefreshLabel: (seconds: number) => `Auto osvežavanje: ${seconds}s`,
       currencyLabel: "Valuta",
       refreshDataButton: "Osveži podatke",
       statCountLabel: "Valute",
@@ -42,16 +44,18 @@ export const LANGUAGE_MESSAGES = {
     table: {
       loading: "Učitavanje podataka...",
       error: "Greška pri učitavanju podataka. Pokušajte ponovo.",
-      rateLimited: (seconds) =>
+      rateLimited: (seconds: number) =>
         `Dosegnut je API limit. Pokušajte ponovo za oko ${seconds} sekundi.`,
     },
     labels: {
       lastUpdated: "Poslednje osvežavanje:",
-      currencyNote: (code, rateNote = "") =>
-        `Cene u ${code.toUpperCase()} i promena u poslednjih 24h.${rateNote ? ` ${rateNote}` : ""}`,
-      rateReference: (base, quote, rate, source) =>
+      currencyNote: (code: string, rateNote = "") =>
+        `Cene u ${code.toUpperCase()} i promena u poslednjih 24h.${
+          rateNote ? ` ${rateNote}` : ""
+        }`,
+      rateReference: (base: string, quote: string, rate: number, source: string) =>
         `Za poređenje koristimo kurs 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()} (${source}).`,
-      rateFallback: (base, quote, rate) =>
+      rateFallback: (base: string, quote: string, rate: number) =>
         `Primenjen je rezervni kurs 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
       noTrendData: "Nema trenda",
     },
@@ -73,7 +77,7 @@ export const LANGUAGE_MESSAGES = {
       updateMode: "Automatic on load",
       sentimentTitle: "Market Sentiment",
       sentimentDescription: "Track market trends and volatility in real time.",
-      autoRefreshLabel: (seconds) => `Auto refresh: ${seconds}s`,
+      autoRefreshLabel: (seconds: number) => `Auto refresh: ${seconds}s`,
       currencyLabel: "Currency",
       refreshDataButton: "Refresh data",
       statCountLabel: "Currencies",
@@ -96,21 +100,21 @@ export const LANGUAGE_MESSAGES = {
     table: {
       loading: "Loading data...",
       error: "Error loading data. Please try again.",
-      rateLimited: (seconds) => `API rate limit reached. Retry in about ${seconds} seconds.`,
+      rateLimited: (seconds: number) => `API rate limit reached. Retry in about ${seconds} seconds.`,
     },
     labels: {
       lastUpdated: "Last updated:",
-      currencyNote: (code, rateNote = "") =>
+      currencyNote: (code: string, rateNote = "") =>
         `Prices in ${code.toUpperCase()} and 24h change.${rateNote ? ` ${rateNote}` : ""}`,
-      rateReference: (base, quote, rate, source) =>
+      rateReference: (base: string, quote: string, rate: number, source: string) =>
         `Reference rate used for comparison: 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()} (${source}).`,
-      rateFallback: (base, quote, rate) =>
+      rateFallback: (base: string, quote: string, rate: number) =>
         `Fallback rate applied: 1 ${base.toUpperCase()} = ${rate} ${quote.toUpperCase()}.`,
       noTrendData: "No trend data",
     },
   },
 };
 
-export function getMessages(language) {
+export function getMessages(language: Language): Messages {
   return LANGUAGE_MESSAGES[language] ?? LANGUAGE_MESSAGES[DEFAULT_LANGUAGE];
 }

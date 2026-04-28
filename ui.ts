@@ -1,4 +1,6 @@
-export function setStatus(statusBadge, message, tone = "idle") {
+import type { Coin, Messages, Tone } from "./types";
+
+export function setStatus(statusBadge: HTMLElement, message: string, tone: Tone = "idle"): void {
   statusBadge.textContent = message;
   statusBadge.className =
     "rounded-full border px-4 py-2 text-xs uppercase tracking-[0.3em] " +
@@ -8,17 +10,16 @@ export function setStatus(statusBadge, message, tone = "idle") {
         ? "border-rose-400/40 bg-rose-500/10 text-rose-200"
         : "border-slate-700 bg-slate-950/50 text-slate-400");
 }
-export function renderLoading(tableBody, messages) {
-  tableBody.innerHTML =
-    `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">${messages.table.loading}</td></tr>`;
+
+export function renderLoading(tableBody: HTMLElement, messages: Messages): void {
+  tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-slate-500">${messages.table.loading}</td></tr>`;
 }
 
-export function renderError(tableBody, message) {
-  tableBody.innerHTML =
-    `<tr><td colspan="5" class="px-4 py-6 text-center text-rose-300">${message}</td></tr>`;
+export function renderError(tableBody: HTMLElement, message: string): void {
+  tableBody.innerHTML = `<tr><td colspan="5" class="px-4 py-6 text-center text-rose-300">${message}</td></tr>`;
 }
 
-function buildSparklinePath(values, width, height) {
+function buildSparklinePath(values: number[], width: number, height: number): string {
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = max - min || 1;
@@ -31,7 +32,13 @@ function buildSparklinePath(values, width, height) {
     .join(" ");
 }
 
-export function renderRows(tableBody, coins, currencyFormatter, compactFormatter, messages) {
+export function renderRows(
+  tableBody: HTMLElement,
+  coins: Coin[],
+  currencyFormatter: Intl.NumberFormat,
+  compactFormatter: Intl.NumberFormat,
+  messages: Messages
+): void {
   tableBody.innerHTML = "";
   coins.forEach((coin) => {
     const change = coin.price_change_percentage_24h ?? 0;
@@ -75,16 +82,26 @@ export function renderRows(tableBody, coins, currencyFormatter, compactFormatter
   });
 }
 
-export function updateStats(statAverage, statPositive, average, positive) {
+export function updateStats(
+  statAverage: HTMLElement,
+  statPositive: HTMLElement,
+  average: string,
+  positive: string
+): void {
   statAverage.textContent = average;
   statPositive.textContent = positive;
 }
 
-export function updateTimestamp(lastUpdated, messages) {
+export function updateTimestamp(lastUpdated: HTMLElement, messages: Messages): void {
   const now = new Date();
   lastUpdated.textContent = `${messages.labels.lastUpdated} ${now.toLocaleTimeString(messages.locale)}`;
 }
 
-export function updateCurrencyNote(currencyNote, code, messages, rateNote = "") {
+export function updateCurrencyNote(
+  currencyNote: HTMLElement,
+  code: string,
+  messages: Messages,
+  rateNote = ""
+): void {
   currencyNote.textContent = messages.labels.currencyNote(code, rateNote);
 }

@@ -6,17 +6,29 @@ import {
   getSavedLanguagePreference,
   isSupportedLanguage,
   saveLanguagePreference,
-} from "../language.js";
-import { SUPPORTED_LANGUAGES } from "../messages.js";
+} from "../language";
+import { SUPPORTED_LANGUAGES } from "../messages";
 
-function createStorageMock() {
-  const store = new Map();
+function createStorageMock(): Storage {
+  const store = new Map<string, string>();
   return {
-    getItem(key) {
-      return store.has(key) ? store.get(key) : null;
+    getItem(key: string) {
+      return store.has(key) ? store.get(key) ?? null : null;
     },
-    setItem(key, value) {
+    setItem(key: string, value: string) {
       store.set(key, String(value));
+    },
+    removeItem(key: string) {
+      store.delete(key);
+    },
+    clear() {
+      store.clear();
+    },
+    key(index: number) {
+      return [...store.keys()][index] ?? null;
+    },
+    get length() {
+      return store.size;
     },
   };
 }

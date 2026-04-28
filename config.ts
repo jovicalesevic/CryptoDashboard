@@ -9,4 +9,4 @@ export const DASHBOARD_CONFIG = {
     fxApiUrl: "https://api.frankfurter.app/latest",
     fxSourceName: "Frankfurter API",
   },
-};
+} as const;

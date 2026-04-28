@@ -1,4 +1,6 @@
-export function calculateAveragePrice(coins) {
+import type { Coin } from "./types";
+
+export function calculateAveragePrice(coins: Coin[]): number {
   if (!coins.length) {
     return 0;
   }
@@ -6,6 +8,6 @@ export function calculateAveragePrice(coins) {
   return coins.reduce((sum, coin) => sum + (coin.current_price || 0), 0) / coins.length;
 }
 
-export function countPositiveTrend(coins) {
+export function countPositiveTrend(coins: Coin[]): number {
   return coins.filter((coin) => (coin.price_change_percentage_24h || 0) > 0).length;
 }

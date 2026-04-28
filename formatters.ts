@@ -1,4 +1,4 @@
-export function createCurrencyFormatter(code, locale) {
+export function createCurrencyFormatter(code: string, locale: string): Intl.NumberFormat {
   return new Intl.NumberFormat(locale, {
     style: "currency",
     currency: code.toUpperCase(),
@@ -6,7 +6,7 @@ export function createCurrencyFormatter(code, locale) {
   });
 }
 
-export function createCompactFormatter(locale) {
+export function createCompactFormatter(locale: string): Intl.NumberFormat {
   return new Intl.NumberFormat(locale, {
     notation: "compact",
     maximumFractionDigits: 2,
