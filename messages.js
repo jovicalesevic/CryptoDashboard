@@ -4,11 +4,11 @@ export const LANGUAGE_MESSAGES = {
     sr: {
         locale: "sr-RS",
         static: {
-            heroTitle: "Moj Pro Dashboard",
+            heroTitle: "Crypto Dashboard",
             refreshHeroButton: "Osveži cene",
             marketTag: "Kripto tržište",
-            mainTitle: "Moderan Kripto Dashboard",
-            mainSubtitle: "Najvećih 10 valuta po tržišnoj kapitalizaciji i promena u poslednjih 24h.",
+            mainTitle: "",
+            mainSubtitle: "Top 10 currencies by market cap and their 24h and 7d change",
             sourceLabel: "Izvor",
             sourceName: "CoinGecko Public API",
             sourceNote: "Bez API ključa",
@@ -56,11 +56,11 @@ export const LANGUAGE_MESSAGES = {
     en: {
         locale: "en-US",
         static: {
-            heroTitle: "My Pro Dashboard",
+            heroTitle: "Crypto Dashboard",
             refreshHeroButton: "Refresh prices",
             marketTag: "Crypto market",
-            mainTitle: "Modern Crypto Dashboard",
-            mainSubtitle: "Top 10 currencies by market cap and their 24h change.",
+            mainTitle: "",
+            mainSubtitle: "Top 10 currencies by market cap and their 24h and 7d change",
             sourceLabel: "Source",
             sourceName: "CoinGecko Public API",
             sourceNote: "No API key required",
