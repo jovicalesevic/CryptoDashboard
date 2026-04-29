@@ -193,7 +193,7 @@ async function loadCoins() {
 function setupPwaInstall() {
     if ("serviceWorker" in navigator) {
         void navigator.serviceWorker
-            .register("./sw.js", { updateViaCache: "none" })
+            .register("./sw.js?v=4", { updateViaCache: "none" })
             .then((registration) => registration.update());
     }
     window.addEventListener("beforeinstallprompt", (event) => {
